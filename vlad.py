@@ -4,13 +4,15 @@ import numpy as np
 import glob
 import itertools
 from sklearn.cluster import KMeans
+import pickle
 
 def extractVladDescriptor():
   desc = extractSIFT(sys.argv[1])
 
   # FIXME: the cluster is either 64 or 256 for decent results
-  print kMeans(desc, 8)
+  est = kMeans(desc, 8)
 
+  pickle_indexer(est)
 
 
 def extractSIFT(imagePath):
@@ -41,7 +43,11 @@ def extractORB(image):
   pass
 
 def kMeans(trainingDescriptors, k):
-  est = KMeans(n_clusters=k,init='k-means++',tol=0.0001,verbose=1).fit(trainingDescriptors)
+  est = KMeans(n_clusters=k,init='k-means++',tol=0.01,verbose=0).fit(trainingDescriptors)
   return est
+
+def pickle_indexer(est):
+  with open("index.pickle", 'wb') as f:
+	  pickle.dump(est, f)
 
 extractVladDescriptor()
