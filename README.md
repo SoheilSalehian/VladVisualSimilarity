@@ -17,10 +17,18 @@ A docker based workflow to avoid dependancy hell that we all hate in most comput
 3. Once in the running container, go to host:
 `cd /host`
 
-4. And run the vlad algorithm by pointing to the data folder:
-`python vlad.py data/`
+4. To index a data set, call:
+`python index.py -data {path to your data directory}`
 
-5. Once done, you should have a pickle file of the index in the root('index.pickle')
+5. To make a query with an image, call:
+`python query.py -query {path to your query image}`
+
+6. You should see a result of similar images and a list of similarity distance measures:
+`[[ 1.27814922  1.28080905  1.30426036  1.32187242]] [[2 4 3 0]]
+Similar Image:  data/example copy 4.jpg
+Similar Image:  data/example.jpg
+Similar Image:  data/example copy.jpg
+Similar Image:  data/example copy 2.jpg`
 
 
 ## Roadmap
