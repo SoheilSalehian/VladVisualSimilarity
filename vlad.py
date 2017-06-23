@@ -4,6 +4,7 @@ import numpy as np
 import glob
 import itertools
 from sklearn.cluster import KMeans
+from sklearn.neighbors import BallTree
 import pickle
 
 def extractVladDescriptor():
@@ -52,6 +53,13 @@ def extractVladDescriptor():
     # Save the vlad descriptors
     with open("vladd_descriptors.pickle", "wb") as f:
       pickle.dump([imageIDs, vladDescriptors], f)
+
+    # Ball tree algorithm in order to organize the vlad descriptors for query purposes
+    # TODO: play with different leaf_size 
+    tree = BallTree(vladDescriptors, leaf_size=10)
+    # Save the index
+    with open("index.pickle", "wb") as f:
+      pickle.dump([imageIDs, tree], f)
 
 
 # TODO: Additional features for future use
