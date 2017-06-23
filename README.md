@@ -2,7 +2,7 @@
 This is POC for a vlad microservice.
 
 ## Motivation
-We would like to efficiently build a content based image retrieval system with state of the art featre descriptors. This is a first stab at building the basic components of a visual similarity using VLAD descriptors.
+We would like to efficiently build a content based image retrieval system with state of the art feature descriptors. This is a first stab at building the basic components of a visual similarity engine using VLAD descriptors.
 
 ## Workflow
 A docker based workflow to avoid dependancy hell that we all hate in most computer visio projects.

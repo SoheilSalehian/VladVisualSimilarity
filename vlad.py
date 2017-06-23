@@ -7,32 +7,51 @@ from sklearn.cluster import KMeans
 import pickle
 
 def extractVladDescriptor():
-  desc = extractSIFT(sys.argv[1])
 
-  # FIXME: the cluster is either 64 or 256 for decent results
-  est = kMeans(desc, 8)
+  vladDescriptors = list()
+  imageIDs = list()
 
-  pickle_indexer(est)
-
-
-def extractSIFT(imagePath):
-  descriptors = list()
-
-  # FIXME: handle all kinds of image types
-  for path in glob.glob(imagePath+"/*.jpg"):
-    print "Extracting from"+path
+  for path in glob.glob(sys.argv[1]+"/*.jpg"):
+    print "Extracting from: "+path
     # SIFT Feature Extraction
     image = cv2.imread(path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     sift = cv2.xfeatures2d.SIFT_create()
     (kps, siftDescriptors) = sift.detectAndCompute(gray, None)
 
-    descriptors.append(siftDescriptors)
+    # FIXME: the cluster is either 64 or 256 for decent results
+    est = kMeans(siftDescriptors, 8)
 
-  descriptors = list(itertools.chain.from_iterable(descriptors))
-  descriptors = np.asarray(descriptors)
+    # get the basics for residulas to generate the vlad features
+    predictedLables = est.predict(siftDescriptors)
+    centers = est.cluster_centers_
+    lables = est.labels_
+    k = est.n_clusters
 
-  return descriptors
+    # The vlad feature vector shape is number of clusteres X sift feature second dimension
+    vlad = np.zeros([k, siftDescriptors.shape[1]])
+    # Iterate through each cluster
+    for i in range(k):
+       # if ther is a match in the cluster
+      if np.sum(predictedLables==i) > 0:
+        # add the residual (the difference from match to the center of the cluster)
+        residual = siftDescriptors[predictedLables==i,:]-centers[i]
+        vlad[i] = np.sum(residual, axis=0)
+
+    # Before normalization check to assert proper shape
+    if not (vlad.shape == (k, 128)):
+      raise AssertionError()
+
+    # Do a L2 normalization on the feature vector
+    vlad = vlad.flatten()
+    vlad = vlad/np.sqrt(np.dot(vlad,vlad))
+
+    vladDescriptors.append(vlad)
+    imageIDs.append(path)
+
+    # Save the vlad descriptors
+    with open("vladd_descriptors.pickle", "wb") as f:
+      pickle.dump([imageIDs, vladDescriptors], f)
 
 
 # TODO: Additional features for future use
@@ -45,9 +64,5 @@ def extractORB(image):
 def kMeans(trainingDescriptors, k):
   est = KMeans(n_clusters=k,init='k-means++',tol=0.01,verbose=0).fit(trainingDescriptors)
   return est
-
-def pickle_indexer(est):
-  with open("index.pickle", 'wb') as f:
-	  pickle.dump(est, f)
 
 extractVladDescriptor()
