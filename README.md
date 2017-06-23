@@ -24,11 +24,14 @@ A docker based workflow to avoid dependancy hell that we all hate in most comput
 `python query.py -query {path to your query image}`
 
 6. You should see a result of similar images and a list of similarity distance measures:
-`[[ 1.27814922  1.28080905  1.30426036  1.32187242]] [[2 4 3 0]]
+
+```
+[[ 1.27814922  1.28080905  1.30426036  1.32187242]] [[2 4 3 0]]
 Similar Image:  data/example copy 4.jpg
 Similar Image:  data/example.jpg
 Similar Image:  data/example copy.jpg
-Similar Image:  data/example copy 2.jpg`
+Similar Image:  data/example copy 2.jpg
+```
 
 
 ## Roadmap
